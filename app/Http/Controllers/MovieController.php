@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    public function index($genre = null)
+    public function index(Request $request)
     {
+        $genre = $request->query('filter');
         $movies = $this->movies();
         $result = [];
 
         foreach ($movies as $movie) {
             if ($genre == null) {
                 $result[] = $movie;
-            } elseif ($movie['genre'] == $genre) {
+            } elseif (strcasecmp($movie['genre'], $genre) === 0) {
                 $result[] = $movie;
             }
         }
@@ -39,12 +40,12 @@ class MovieController extends Controller
     private function movies()
     {
         return [
-            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'rating' => '8.8'],
-            2 => ['id' => 2, 'title' => 'The Dark Knight', 'genre' => 'Action', 'rating' => '9.0'],
-            3 => ['id' => 3, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'rating' => '8.7'],
-            4 => ['id' => 4, 'title' => 'Parasite', 'genre' => 'Thriller', 'rating' => '8.5'],
-            5 => ['id' => 5, 'title' => 'Spirited Away', 'genre' => 'Animation', 'rating' => '8.6'],
-            6 => ['id' => 6, 'title' => 'Your Name', 'genre' => 'Animation', 'rating' => '8.4'],
+            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'rating' => 8.8],
+            2 => ['id' => 2, 'title' => 'The Dark Knight', 'genre' => 'Action', 'rating' => 9.0],
+            3 => ['id' => 3, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'rating' => 8.7],
+            4 => ['id' => 4, 'title' => 'Parasite', 'genre' => 'Thriller', 'rating' => 8.5],
+            5 => ['id' => 5, 'title' => 'Spirited Away', 'genre' => 'Animation', 'rating' => 8.6],
+            6 => ['id' => 6, 'title' => 'Your Name', 'genre' => 'Animation', 'rating' => 8.4],
         ];
     }
 }

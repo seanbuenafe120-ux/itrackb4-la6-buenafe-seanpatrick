@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Movie List')
+@section('title', $filter ? 'Filtered Movies' : 'All Movies')
 
 @section('content')
     @if($filter)
@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($movies as $movie)
+            @forelse ($movies as $movie)
             <tr>
                 <td>
                     <a href="{{ route('movies.show', ['id' => $movie['id']]) }}">
@@ -28,7 +28,11 @@
                 <td>{{ $movie['genre'] }}</td>
                 <td>{{ $movie['rating'] }}</td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="3"><b>No Movie Found: {{ $filter }}</b></td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 @endsection
