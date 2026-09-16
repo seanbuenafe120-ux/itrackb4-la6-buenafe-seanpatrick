@@ -6,27 +6,36 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    public function index(Request $request)
+    private function movies(): array
     {
-        $genre = $request->query('filter');
-        $movies = $this->movies();
-        $result = [];
+        return [
+            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan', 'year' => 2010],
+            2 => ['id' => 2, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan', 'year' => 2014],
+            3 => ['id' => 3, 'title' => 'The Dark Knight', 'genre' => 'Action', 'director' => 'Christopher Nolan', 'year' => 2008],
+            4 => ['id' => 4, 'title' => 'Pulp Fiction', 'genre' => 'Crime', 'director' => 'Quentin Tarantino', 'year' => 1994],
+            5 => ['id' => 5, 'title' => 'The Matrix', 'genre' => 'Sci-Fi', 'director' => 'Lana Wachowski, Lilly Wachowski', 'year' => 1999],
+            6 => ['id' => 6, 'title' => 'Parasite', 'genre' => 'Thriller', 'director' => 'Bong Joon-ho', 'year' => 2019],
+        ];
+    }
 
-        foreach ($movies as $movie) {
-            if ($genre == null) {
-                $result[] = $movie;
-            } elseif (strcasecmp($movie['genre'], $genre) === 0) {
-                $result[] = $movie;
-            }
-        }
-
+    public function index()
+    {
         return view('movies.index', [
-            'movies' => $result,
-            'filter' => $genre
+            'movies' => $this->movies(),
         ]);
     }
 
-    public function show($id = 1)
+    public function create()
+    {
+        abort(404);
+    }
+
+    public function store(Request $request)
+    {
+        
+    }
+
+    public function show(int $id)
     {
         $movies = $this->movies();
 
@@ -34,18 +43,48 @@ class MovieController extends Controller
             abort(404);
         }
 
-        return view('movies.show', ['movie' => $movies[$id]]);
+        return view('movies.show', [
+            'movie' => $movies[$id],
+        ]);
     }
 
-    private function movies()
+    public function edit(int $id)
     {
-        return [
-            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'rating' => 8.8],
-            2 => ['id' => 2, 'title' => 'The Dark Knight', 'genre' => 'Action', 'rating' => 9.0],
-            3 => ['id' => 3, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'rating' => 8.7],
-            4 => ['id' => 4, 'title' => 'Parasite', 'genre' => 'Thriller', 'rating' => 8.5],
-            5 => ['id' => 5, 'title' => 'Spirited Away', 'genre' => 'Animation', 'rating' => 8.6],
-            6 => ['id' => 6, 'title' => 'Your Name', 'genre' => 'Animation', 'rating' => 8.4],
-        ];
+        
+    }
+
+    public function update(Request $request, int $id)
+    {
+      
+    }
+
+    public function destroy(int $id)
+    {
+      
+    }
+
+    public function featured()
+    {
+        $movies = $this->movies();
+
+        return view('movies.featured', [
+            'movie' => $movies[1],
+        ]);
+    }
+
+    public function filter(?string $genre = null)
+    {
+        $movies = $this->movies();
+
+        if ($genre !== null && $genre !== '') {
+            $movies = array_filter(
+                $movies,
+                fn (array $movie): bool => strcasecmp($movie['genre'], $genre) === 0
+            );
+        }
+
+        return view('movies.index', [
+            'movies' => $movies,
+        ]);
     }
 }
