@@ -1,15 +1,9 @@
-<nav class="navbar navbar-expand-sm bg-light">
-    <div class="container-fluid">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('movies.index') }}">All Movies</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('movies.index') }}?filter=Action">Filter</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('movies.show', ['id' => 1]) }}">Featured</a>
-            </li>
-        </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ route('movies.index') }}">Movie Vault</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link {{ request()->is('movies*') ? 'active text-warning fw-bold' : '' }}" href="{{ route('movies.index') }}">Movies Library</a>
+            <a class="nav-link" href="{{ route('movies.show', 1) }}">Featured</a>
+        </div>
     </div>
 </nav>

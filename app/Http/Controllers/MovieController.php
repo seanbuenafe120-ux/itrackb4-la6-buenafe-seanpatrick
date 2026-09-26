@@ -6,85 +6,76 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    private function movies(): array
+    private function getMovies()
     {
         return [
-            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan', 'year' => 2010],
-            2 => ['id' => 2, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan', 'year' => 2014],
-            3 => ['id' => 3, 'title' => 'The Dark Knight', 'genre' => 'Action', 'director' => 'Christopher Nolan', 'year' => 2008],
-            4 => ['id' => 4, 'title' => 'Pulp Fiction', 'genre' => 'Crime', 'director' => 'Quentin Tarantino', 'year' => 1994],
-            5 => ['id' => 5, 'title' => 'The Matrix', 'genre' => 'Sci-Fi', 'director' => 'Lana Wachowski, Lilly Wachowski', 'year' => 1999],
-            6 => ['id' => 6, 'title' => 'Parasite', 'genre' => 'Thriller', 'director' => 'Bong Joon-ho', 'year' => 2019],
+            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan'],
+            2 => ['id' => 2, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan'],
+            3 => ['id' => 3, 'title' => 'The Dark Knight', 'genre' => 'Action', 'director' => 'Christopher Nolan'],
+            4 => ['id' => 4, 'title' => 'Pulp Fiction', 'genre' => 'Crime', 'director' => 'Quentin Tarantino'],
+            5 => ['id' => 5, 'title' => 'Django Unchained', 'genre' => 'Action', 'director' => 'Quentin Tarantino'],
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $allMovies = $this->getMovies();
+        $genre = $request->query('genre');
+        $director = $request->query('director');
+
+        $movies = array_filter($allMovies, function ($movie) use ($genre, $director) {
+            $matchGenre = !$genre || $movie['genre'] === $genre;
+            $matchDirector = !$director || $movie['director'] === $director;
+            return $matchGenre && $matchDirector;
+        });
+
         return view('movies.index', [
-            'movies' => $this->movies(),
+            'movies' => $movies,
+            'selectedGenre' => $genre,
+            'selectedDirector' => $director,
         ]);
     }
 
     public function create()
     {
-        abort(404);
+        // Empty stub
     }
 
     public function store(Request $request)
     {
-        
+        // Empty stub
     }
 
-    public function show(int $id)
+    public function show(string $id)
     {
-        $movies = $this->movies();
+        $movies = $this->getMovies();
 
         if (!isset($movies[$id])) {
             abort(404);
         }
 
-        return view('movies.show', [
-            'movie' => $movies[$id],
-        ]);
+        return view('movies.show', ['movie' => $movies[$id]]);
     }
 
-    public function edit(int $id)
+    public function edit(string $id)
     {
-        
+        // Empty stub
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, string $id)
     {
-      
+        // Empty stub
     }
 
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
-      
+        // Empty stub
     }
 
     public function featured()
     {
-        $movies = $this->movies();
-
-        return view('movies.featured', [
-            'movie' => $movies[1],
-        ]);
-    }
-
-    public function filter(?string $genre = null)
-    {
-        $movies = $this->movies();
-
-        if ($genre !== null && $genre !== '') {
-            $movies = array_filter(
-                $movies,
-                fn (array $movie): bool => strcasecmp($movie['genre'], $genre) === 0
-            );
-        }
-
-        return view('movies.index', [
-            'movies' => $movies,
-        ]);
+        $movies = $this->getMovies();
+        $featuredMovie = $movies[1];
+        return view('movies.show', ['movie' => $featuredMovie]);
     }
 }

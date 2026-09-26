@@ -22,34 +22,27 @@
             </div>
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="border rounded p-3 bg-light">
                             <small class="text-muted d-block">ID</small>
                             <strong>{{ $movie['id'] }}</strong>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="border rounded p-3 bg-light">
                             <small class="text-muted d-block">Genre</small>
                             <strong>{{ $movie['genre'] }}</strong>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="border rounded p-3 bg-light">
                             <small class="text-muted d-block">Director</small>
                             <strong>{{ $movie['director'] }}</strong>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 bg-light">
-                            <small class="text-muted d-block">Release Year</small>
-                            <strong>{{ $movie['year'] }}</strong>
-                        </div>
-                    </div>
                 </div>
                 <div class="mt-4">
-                    <a href="{{ route('movies.index') }}" class="btn btn-primary me-2">Back to all movies</a>
-                    <a href="{{ route('movies.featured') }}" class="btn btn-outline-secondary">Featured page</a>
+                    <a href="{{ route('movies.index') }}" class="btn btn-primary">Back to all movies</a>
                 </div>
             </div>
         </div>

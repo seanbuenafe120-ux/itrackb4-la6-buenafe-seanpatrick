@@ -10,9 +10,11 @@ Route::get('/whoami', function () {
 Route::get('/movies/featured', [MovieController::class, 'featured'])
     ->name('movies.featured');
 
-Route::get('/movies/filter/{genre?}', [MovieController::class, 'filter'])
-    ->name('movies.filter');
-
-Route::resource('movies', MovieController::class);
+Route::get('/movies/filter/{genre?}', function ($genre = null) {
+    if ($genre) {
+        return redirect()->route('movies.index', ['genre' => $genre]);
+    }
+    return redirect()->route('movies.index');
+});
 
 Route::resource('movies', MovieController::class)->only(['index', 'show']);
