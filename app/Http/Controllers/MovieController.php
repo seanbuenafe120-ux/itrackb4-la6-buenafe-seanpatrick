@@ -6,20 +6,26 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    private function getMovies()
+    private function movies(): array
     {
-        return [
-            1 => ['id' => 1, 'title' => 'Inception', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan'],
-            2 => ['id' => 2, 'title' => 'Interstellar', 'genre' => 'Sci-Fi', 'director' => 'Christopher Nolan'],
-            3 => ['id' => 3, 'title' => 'The Dark Knight', 'genre' => 'Action', 'director' => 'Christopher Nolan'],
-            4 => ['id' => 4, 'title' => 'Pulp Fiction', 'genre' => 'Crime', 'director' => 'Quentin Tarantino'],
-            5 => ['id' => 5, 'title' => 'Django Unchained', 'genre' => 'Action', 'director' => 'Quentin Tarantino'],
-        ];
+        $path = storage_path('app/movies.json');
+
+        return json_decode(file_get_contents($path), true);
+    }
+
+    private function saveMovies(array $movies): void
+    {
+        $path = storage_path('app/movies.json');
+
+        file_put_contents(
+            $path,
+            json_encode($movies, JSON_PRETTY_PRINT)
+        );
     }
 
     public function index(Request $request)
     {
-        $allMovies = $this->getMovies();
+        $allMovies = $this->movies();
         $genre = $request->query('genre');
         $director = $request->query('director');
 
@@ -38,17 +44,38 @@ class MovieController extends Controller
 
     public function create()
     {
-        // Empty stub
+        return view('movies.create');
     }
 
     public function store(Request $request)
     {
-        // Empty stub
+        $validated = $request->validate([
+            'title' => 'required|max:100',
+            'genre' => 'required|in:Action,Comedy,Drama,Horror,Sci-Fi,Crime',
+            'director' => 'required|max:100',
+        ]);
+
+        $movies = $this->movies();
+
+        $nextId = max(array_keys($movies)) + 1;
+
+        $movies[$nextId] = [
+            'id' => $nextId,
+            'title' => $validated['title'],
+            'genre' => $validated['genre'],
+            'director' => $validated['director'],
+        ];
+
+        $this->saveMovies($movies);
+
+        return redirect()
+            ->route('movies.index')
+            ->with('success', 'Movie added successfully.');
     }
 
-    public function show(string $id)
+    public function show(int $id)
     {
-        $movies = $this->getMovies();
+        $movies = $this->movies();
 
         if (!isset($movies[$id])) {
             abort(404);
@@ -57,25 +84,11 @@ class MovieController extends Controller
         return view('movies.show', ['movie' => $movies[$id]]);
     }
 
-    public function edit(string $id)
-    {
-        // Empty stub
-    }
-
-    public function update(Request $request, string $id)
-    {
-        // Empty stub
-    }
-
-    public function destroy(string $id)
-    {
-        // Empty stub
-    }
-
     public function featured()
     {
-        $movies = $this->getMovies();
-        $featuredMovie = $movies[1];
-        return view('movies.show', ['movie' => $featuredMovie]);
+        $movies = $this->movies();
+        $movie = $movies[1] ?? reset($movies);
+
+        return view('movies.show', ['movie' => $movie]);
     }
 }
